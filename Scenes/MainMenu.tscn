@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://csva81slspcty"]
+[gd_scene format=3 uid="uid://csva81slspcty"]
 
-[ext_resource type="Script" uid="uid://ddy6u0jx3n5m8" path="res://Scripts/main_menu.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://b7fh613oit87x" path="res://Scripts/main_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://cyu48yo63ffd7" path="res://Assets/Logo/logo 1920x1080.png" id="2_logo"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=29529027]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1290732767]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0784314, 0.0784314, 0.0784314, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=26455112]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -37,14 +37,14 @@ grow_vertical = 2
 theme_override_constants/separation = 50
 alignment = 1
 
-[node name="LogoPlaceholder" type="TextureRect" parent="VBoxContainer"]
+[node name="LogoPlaceholder" type="TextureRect" parent="VBoxContainer" unique_id=1787513168]
 custom_minimum_size = Vector2(500, 200)
 layout_mode = 2
 texture = ExtResource("2_logo")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="StartButton" type="Button" parent="VBoxContainer"]
+[node name="StartButton" type="Button" parent="VBoxContainer" unique_id=897694228]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 80)
 layout_mode = 2
