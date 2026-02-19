@@ -1,3 +1,190 @@
-[gd_scene format=3 uid="uid://dvbsu0oc0xp70"]
+[gd_scene load_steps=2 format=3 uid="uid://cx4j1lq5k8v"]
 
-[node name="GameLoop" type="Node2D" unique_id=1314213823]
+[ext_resource type="Script" uid="uid://c5q3y1n3k2x" path="res://Scripts/game_loop.gd" id="1_loop"]
+
+[node name="GameLoop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_loop")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.156863, 0.156863, 0.156863, 1)
+
+[node name="MetersContainer" type="GridContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 50.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+columns = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+
+[node name="AltLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Altitude (Correct)"
+
+[node name="AltitudeBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="FuelLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Fuel Level"
+
+[node name="FuelBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+step = 0.1
+value = 10.0
+
+[node name="TimeLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Punctuality"
+
+[node name="TimeBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 10.0
+
+[node name="HPLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Structural HP"
+
+[node name="HPBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 10.0
+
+[node name="ComfLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Passenger Comfort"
+
+[node name="ComfortBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 10.0
+
+[node name="TrustLabel" type="Label" parent="MetersContainer"]
+layout_mode = 2
+text = "Company Trust"
+
+[node name="TrustBar" type="ProgressBar" parent="MetersContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="ActionsPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="GridContainer" type="GridContainer" parent="ActionsPanel"]
+layout_mode = 2
+columns = 4
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+
+[node name="ClimbHigh" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Climb High"
+
+[node name="SmoothAscent" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Smooth Ascent"
+
+[node name="MaxEconomy" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Max Economy"
+
+[node name="PullPower" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pull Power"
+
+[node name="Accelerate" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Accelerate"
+
+[node name="Reduce" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reduce Speed"
+
+[node name="Aggressive" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Aggressive Manu."
+
+[node name="Stabilize" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Stabilize Struct."
+
+[node name="SmoothFlight" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Smooth Flight"
+
+[node name="CalmingAd" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Calming Ad"
+
+[node name="KeepSchedule" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Keep Schedule"
+
+[node name="ReportDelay" type="Button" parent="ActionsPanel/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Report Delay"

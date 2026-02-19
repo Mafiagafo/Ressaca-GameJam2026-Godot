@@ -1,0 +1,129 @@
+﻿The hangover is in the air!
+
+
+Game overview
+You control a commercial airline pilot attempting to complete simple maneuvers (takeoff, altitude hold, landing) while dealing with a severe hangover. The interface displays numerous buttons, levers, and instruments, but the hangover causes:
+
+
+* Commands are executed incorrectly.
+* Certain buttons may become temporarily unusable.
+* The pilot himself may have memory lapses and confuse instructions.
+
+
+The goal is to complete the "ideal flight checklist" knowing that, in practice, you will be prevented from doing everything correctly.
+
+
+Everything Must Be:Complete all items on the mission checklist. (With a margin of error)
+But not everything is possible:The control options don't always obey the player, or the player is prevented from choosing the best option at any given moment.
+
+
+Game Loop principal
+1. Briefing phase
+   * The game presents the objectives of the phase (e.g., take off and stabilize at X feet, or perform an emergency landing).
+   * You see the checklist of "perfect" actions (what should be done).
+2. Execution under the tide
+   * You try to follow the checklist in real time, but debuffs start to interfere:
+      * Buttons stop responding.
+      * Levers lock.
+      * The interface displays conflicting or delayed instructions.
+3. Consequence and evaluation
+   * The game evaluates not only "whether or not the mission was completed," but also which rules/procedures you prioritized or sacrificed (safety, passenger comfort, fuel economy, etc.).
+   * You unlock new "states" of hangover, new types of breakdowns, and new rules that are impossible to follow simultaneously.
+Loop: Plan → Try to act correctly → Be sabotaged by debuffs → Adapt, decide what will be disregarded → See the impact.
+________________
+Monitorable resources (briefing)
+1. altitude
+2. fuel_level
+3. ETA (Airplane speed)
+4. structural_hp (risk of damage/collapse)
+5. passenger_comfort
+6. company_pressure (deadlines, cost-cutting, reputation)
+
+
+________________
+Buttons and how they affect each feature.
+1. Altitude
+* Button: “Climb High”
+   * Effect: Significantly increases altitude in this run, but consumes more fuel and increases stress on the structure.
+* Button: “Smooth Ascent”
+   * Effect: Increases altitude slightly, consumes less fuel, generates less stress, but may cause schedule delays (increases company pressure).
+________________
+
+
+2. Fuel
+* Button: “Maximum Economy”
+   * Effect: Reduces fuel consumption per trip, but limits top speed and makes controls less responsive (worsens comfort).
+* Button: “Pull Power”
+   * Effect: Increases fuel consumption to gain speed and/or altitude quickly, reducing lag, but increases stress on the structure.
+________________
+
+
+3. Speed
+* Button: “Accelerate”
+   * Effect: Increases speed, helps meet schedules and reduces company pressure, but consumes more fuel and may reduce comfort (more perceived turbulence).
+* Button: “Reduce”
+   * Effect: It slows down the process, improving comfort and reducing stress, but it can cause delays and increase company pressure.
+________________
+
+
+4. Structural stress
+* Button: “Aggressive Maneuver”
+   * Effect: Helps to quickly correct altitude/rotation, but significantly increases structural stress and passenger discomfort.
+* Button: “Stabilize Structure”
+   * Effect: Gradually reduces stress on the structure at the cost of limiting other actions in the round (e.g., cannot accelerate strongly).
+________________
+
+
+5. Passenger comfort
+* Button: “Smooth Flight”
+   * Effect: Prioritizes slow and smooth movements, reduces discomfort, but prevents certain abrupt actions (climbing hard, aggressive maneuvers) in this round.
+* Button: "Calming Advertisement"
+   * Effect: Temporarily reduces passenger discomfort/perception of danger, but consumes the pilot's "attention" (perhaps reducing their lucidity or leaving some indicator unsupervised during that round).
+________________
+
+
+6. Company pressure
+* Button: "Keep to Schedule at Any Cost"
+   * Effect: Reduces company pressure if you get closer to the ideal time, but increases fuel consumption and stress on the structure (unlocks more aggressive actions in that round).
+* Button: “Report Delay / State Status”
+   * Effect: It slightly increases passenger discomfort, but significantly reduces pressure on the airline (they "accept" the delay), allowing for safer decisions on subsequent flights without as much penalty.
+________________
+Visual references:
+The idea is for it to be a resource management game, so all the information should be displayed on the plane's dashboard. We could perhaps include some visualization effects, but initially none would be necessary.
+Perhaps something on the horizon, like a mountain or rain clouds.
+
+
+
+
+
+  
+
+  
+
+
+
+________________
+
+
+  
+
+
+
+  
+
+  
+________________
+
+Next steps:
+1. Suggested Engine.
+        Construct 2
+        Other that the team is more comfortable using.
+2. Required assets.
+        6 sprites for the buttons and their "up and down" variations.
+        6 meters to identify monitorable resources
+        Assets ready for use as placeholders (to credit in the jam).
+                Visual assets
+                Sound effects assets
+3. Desirable assets.
+        Animations to indicate each event: (Turbulence, Pilot feeling unwell, rain, etc.)
+        Our assets to add a personal touch to the game.
