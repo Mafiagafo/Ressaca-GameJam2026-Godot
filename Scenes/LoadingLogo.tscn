@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://mpawerrlgtku"]
 
-[ext_resource type="Texture2D" uid="uid://cyu48yo63ffd7" path="res://Assets/Logo/logo 1920x1080.png" id="1_ciynq"]
-[ext_resource type="Script" uid="uid://bdi7lw4kh77al" path="res://loading_logo.gd" id="1_y7rfb"]
+[ext_resource type="Script" uid="uid://bdi7lw4kh77al" path="res://Scripts/loading_logo.gd" id="1_8o2w7"]
+[ext_resource type="Texture2D" uid="uid://cyu48yo63ffd7" path="res://Assets/Logo/logo 1920x1080.png" id="2_03ng6"]
 
 [sub_resource type="Animation" id="Animation_focf8"]
 resource_name = "Fade"
@@ -41,12 +41,12 @@ _data = {
 }
 
 [node name="Intro - Node2D" type="Node2D" unique_id=1778584523]
-script = ExtResource("1_y7rfb")
+script = ExtResource("1_8o2w7")
 
 [node name="Logo1920x1080" type="Sprite2D" parent="." unique_id=957052471]
 position = Vector2(580.8073, 328.75)
 scale = Vector2(1.2097967, 1.2097967)
-texture = ExtResource("1_ciynq")
+texture = ExtResource("2_03ng6")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=624704812]
 offset_left = -8.0
