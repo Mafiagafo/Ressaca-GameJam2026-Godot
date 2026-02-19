@@ -1,3 +1,59 @@
 [gd_scene format=3 uid="uid://mpawerrlgtku"]
 
-[node name="Node2D" type="Node2D" unique_id=1778584523]
+[ext_resource type="Texture2D" uid="uid://cyu48yo63ffd7" path="res://Assets/Logo/logo 1920x1080.png" id="1_ciynq"]
+[ext_resource type="Script" uid="uid://bdi7lw4kh77al" path="res://loading_logo.gd" id="1_y7rfb"]
+
+[sub_resource type="Animation" id="Animation_focf8"]
+resource_name = "Fade"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.5, 2, 4.5, 6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 0, 0, 1), Color(0, 0, 0, 0), Color(0, 0, 0, 0), Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_8pliu"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xvm25"]
+_data = {
+&"Fade": SubResource("Animation_focf8"),
+&"RESET": SubResource("Animation_8pliu")
+}
+
+[node name="Intro - Node2D" type="Node2D" unique_id=1778584523]
+script = ExtResource("1_y7rfb")
+
+[node name="Logo1920x1080" type="Sprite2D" parent="." unique_id=957052471]
+position = Vector2(580.8073, 328.75)
+scale = Vector2(1.2097967, 1.2097967)
+texture = ExtResource("1_ciynq")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=624704812]
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 1160.0
+offset_bottom = 656.0
+color = Color(0, 0, 0, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1088083454]
+libraries/ = SubResource("AnimationLibrary_xvm25")
