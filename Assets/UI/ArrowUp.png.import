@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cfdbi41ag8vw1"
-valid=false
+uid="uid://cvexolath3dqb"
+path="res://.godot/imported/ArrowUp.png-244aa782faf568d039d571b9f19b6415.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
-source_file="res://Assets/UI/arrow_up.png"
+source_file="res://Assets/UI/ArrowUp.png"
+dest_files=["res://.godot/imported/ArrowUp.png-244aa782faf568d039d571b9f19b6415.ctex"]
 
 [params]
 

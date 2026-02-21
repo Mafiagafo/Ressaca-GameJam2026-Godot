@@ -55,8 +55,8 @@ func _setup_dynamic_ui():
 	_setup_arrow_indicators()
 
 func _load_arrow_textures():
-	tex_arrow_up = load("res://Assets/UI/arrow_up.png")
-	tex_arrow_down = load("res://Assets/UI/arrow_down.png")
+	tex_arrow_up = load("res://Assets/UI/ArrowUp.png")
+	tex_arrow_down = load("res://Assets/UI/ArrowDown.png")
 	
 	# Fallback if images are missing, create placeholder noise
 	if not tex_arrow_up:
