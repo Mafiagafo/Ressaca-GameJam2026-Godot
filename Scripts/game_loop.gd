@@ -16,8 +16,15 @@ var msg_label: Label
 var next_btn: Button
 var preview_label: Label
 
+# Discionario para armazenar as setas de cada barra: { "correct_altitude": {"up": TextureRect, "down": TextureRect}, ... }
+var arrow_indicators: Dictionary = {}
+
+var tex_arrow_up: Texture2D
+var tex_arrow_down: Texture2D
+
 func _ready() -> void:
 	GameState.metrics_changed.connect(_update_ui)
+	_load_arrow_textures()
 	_setup_dynamic_ui()
 	_init_master_actions()
 	round_context = RoundContext.new()
@@ -44,6 +51,59 @@ func _setup_dynamic_ui():
 	next_btn.text = "Continue"
 	next_btn.pressed.connect(_on_next_pressed)
 	center_msg_box.add_child(next_btn)
+	
+	_setup_arrow_indicators()
+
+func _load_arrow_textures():
+	tex_arrow_up = load("res://Assets/UI/arrow_up.png")
+	tex_arrow_down = load("res://Assets/UI/arrow_down.png")
+	
+	# Fallback if images are missing, create placeholder noise
+	if not tex_arrow_up:
+		var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+		img.fill(Color.GREEN)
+		tex_arrow_up = ImageTexture.create_from_image(img)
+	if not tex_arrow_down:
+		var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
+		img.fill(Color.RED)
+		tex_arrow_down = ImageTexture.create_from_image(img)
+
+func _setup_arrow_indicators():
+	var bars = {
+		"correct_altitude": alt_bar,
+		"fuel_level": fuel_bar,
+		"punctual_arrival": time_bar,
+		"structural_hp": hp_bar,
+		"passenger_comfort": comfort_bar,
+		"company_trust": trust_bar
+	}
+	
+	for stat in bars:
+		var bar: ProgressBar = bars[stat]
+		var hbox = HBoxContainer.new()
+		bar.add_sibling(hbox)
+		# Move hbox to the position where the bar was
+		bar.get_parent().move_child(hbox, bar.get_index())
+		# Re-parent the bar into the hbox
+		bar.get_parent().remove_child(bar)
+		hbox.add_child(bar)
+		
+		var icon_up = TextureRect.new()
+		icon_up.texture = tex_arrow_up
+		icon_up.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+		icon_up.custom_minimum_size = Vector2(20, 20)
+		icon_up.hide()
+		
+		var icon_down = TextureRect.new()
+		icon_down.texture = tex_arrow_down
+		icon_down.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+		icon_down.custom_minimum_size = Vector2(20, 20)
+		icon_down.hide()
+		
+		hbox.add_child(icon_up)
+		hbox.add_child(icon_down)
+		
+		arrow_indicators[stat] = {"up": icon_up, "down": icon_down}
 
 func _init_master_actions():
 	master_actions = [
@@ -203,13 +263,37 @@ func execute_phase_preview():
 func _on_action_hovered(action: ActionButton):
 	if round_context.current_phase != RoundContext.Phase.PREVIEW: return
 	var p_text = "Preview [%s]: " % action.display_name
+	
+	_hide_all_arrows()
+	
 	for key in action.effects:
-		p_text += "%s %s%s  " % [key, "+" if action.effects[key] > 0 else "", str(action.effects[key])]
+		var val = action.effects[key]
+		p_text += "%s %s%s  " % [key, "+" if val > 0 else "", str(val)]
+		
+		if arrow_indicators.has(key):
+			if val > 0:
+				arrow_indicators[key]["up"].show()
+				_pulse_arrow(arrow_indicators[key]["up"])
+			elif val < 0:
+				arrow_indicators[key]["down"].show()
+				_pulse_arrow(arrow_indicators[key]["down"])
+			
 	preview_label.text = p_text
 
 func _on_action_unhovered():
 	if round_context.current_phase != RoundContext.Phase.PREVIEW: return
 	preview_label.text = "Wait for choice..."
+	_hide_all_arrows()
+	
+func _hide_all_arrows():
+	for stat in arrow_indicators:
+		arrow_indicators[stat]["up"].hide()
+		arrow_indicators[stat]["down"].hide()
+
+func _pulse_arrow(node: TextureRect):
+	var t = create_tween().set_loops(0)
+	t.tween_property(node, "modulate:a", 0.3, 0.3)
+	t.tween_property(node, "modulate:a", 1.0, 0.3)
 
 func _on_action_pressed(action: ActionButton):
 	if round_context.current_phase == RoundContext.Phase.PREVIEW:
@@ -219,6 +303,7 @@ func _on_action_pressed(action: ActionButton):
 func execute_phase_results(action: ActionButton):
 	actions_panel.hide()
 	preview_label.hide()
+	_hide_all_arrows()
 	_pop_in(center_msg_box)
 	
 	if action.effects.has("correct_altitude"): GameState.correct_altitude += action.effects["correct_altitude"]
