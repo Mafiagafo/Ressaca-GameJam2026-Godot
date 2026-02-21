@@ -44,15 +44,15 @@ _data = {
 script = ExtResource("1_8o2w7")
 
 [node name="Logo1920x1080" type="Sprite2D" parent="." unique_id=957052471]
-position = Vector2(580.8073, 328.75)
-scale = Vector2(1.2097967, 1.2097967)
+position = Vector2(957.39136, 540.75)
+scale = Vector2(2, 2)
 texture = ExtResource("2_03ng6")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=624704812]
-offset_left = -8.0
-offset_top = -8.0
-offset_right = 1160.0
-offset_bottom = 656.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 1944.0
+offset_bottom = 1096.0
 color = Color(0, 0, 0, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1088083454]

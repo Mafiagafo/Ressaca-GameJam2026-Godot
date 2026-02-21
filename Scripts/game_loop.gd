@@ -75,12 +75,13 @@ func _init_master_actions():
 		btn.mouse_exited.connect(func(): _on_action_unhovered())
 
 func _update_ui() -> void:
-	alt_bar.value = GameState.correct_altitude
-	fuel_bar.value = GameState.fuel_level
-	time_bar.value = GameState.punctual_arrival
-	hp_bar.value = GameState.structural_hp
-	comfort_bar.value = GameState.passenger_comfort
-	trust_bar.value = GameState.company_trust
+	var t = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	t.tween_property(alt_bar, "value", GameState.correct_altitude, 0.5)
+	t.tween_property(fuel_bar, "value", GameState.fuel_level, 0.5)
+	t.tween_property(time_bar, "value", GameState.punctual_arrival, 0.5)
+	t.tween_property(hp_bar, "value", GameState.structural_hp, 0.5)
+	t.tween_property(comfort_bar, "value", GameState.passenger_comfort, 0.5)
+	t.tween_property(trust_bar, "value", GameState.company_trust, 0.5)
 
 func _process_phase() -> void:
 	actions_panel.hide()
@@ -127,7 +128,7 @@ func execute_phase_round_start():
 	change_phase(RoundContext.Phase.BRIEFING)
 
 func execute_phase_briefing():
-	center_msg_box.show()
+	_pop_in(center_msg_box)
 	var msg = "Round %d Briefing\n\n" % round_context.round_number
 	if GameState.fuel_level <= 3.0:
 		msg += "WARNING: Critical Fuel Levels!\n"
@@ -142,7 +143,7 @@ func execute_phase_briefing():
 	msg_label.text = msg
 
 func execute_phase_chaos():
-	center_msg_box.show()
+	_pop_in(center_msg_box)
 	var chaos_roll = randi() % 4
 	var msg = "Chaos Event:\n\n"
 	if chaos_roll == 0:
@@ -158,13 +159,45 @@ func execute_phase_chaos():
 		msg += "Clear Skies. No negative effects."
 	
 	msg_label.text = msg
+	
+	if chaos_roll != 3:
+		_shake_screen()
 
 func execute_phase_shuffle():
+	# 1. Hide all buttons first
+	for node in actions_panel.get_node("GridContainer").get_children():
+		node.hide()
+	
+	# 2. Build a pool of valid actions that were not chosen in the last 3 rounds
+	var valid_pool: Array[ActionButton] = []
+	for action in master_actions:
+		if not round_context.past_choices.has(action.id):
+			valid_pool.append(action)
+			
+	# Validation: If we have fewer than 3 valid actions (shouldn't happen with 12 total), refill
+	if valid_pool.size() < 3:
+		valid_pool = master_actions.duplicate()
+	
+	# 3. Shuffle and pick exactly 3
+	valid_pool.shuffle()
+	round_context.available_actions = valid_pool.slice(0, 3)
+	
+	# 4. Show the UI buttons for those 3 picked actions
+	var grid = actions_panel.get_node("GridContainer")
+	for action in round_context.available_actions:
+		for node in grid.get_children():
+			if node is Button and node.text == action.display_name:
+				node.show()
+				break
+				
 	change_phase(RoundContext.Phase.PREVIEW)
 
 func execute_phase_preview():
-	actions_panel.show()
+	_slide_up(actions_panel)
 	preview_label.show()
+	preview_label.modulate.a = 0.0
+	var t = create_tween()
+	t.tween_property(preview_label, "modulate:a", 1.0, 0.5)
 	preview_label.text = "Wait for choice..."
 
 func _on_action_hovered(action: ActionButton):
@@ -186,7 +219,7 @@ func _on_action_pressed(action: ActionButton):
 func execute_phase_results(action: ActionButton):
 	actions_panel.hide()
 	preview_label.hide()
-	center_msg_box.show()
+	_pop_in(center_msg_box)
 	
 	if action.effects.has("correct_altitude"): GameState.correct_altitude += action.effects["correct_altitude"]
 	if action.effects.has("fuel_level"): GameState.fuel_level += action.effects["fuel_level"]
@@ -204,3 +237,31 @@ func execute_phase_results(action: ActionButton):
 		next_btn.text = "Next Round"
 		
 	msg_label.text = msg
+	
+	# Record the action id, limit to last 3
+	round_context.past_choices.push_front(action.id)
+	if round_context.past_choices.size() > 3:
+		round_context.past_choices.pop_back()
+
+func _pop_in(node: Control):
+	node.show()
+	node.scale = Vector2.ZERO
+	# Pivot from center approx
+	node.pivot_offset = node.size / 2.0
+	var t = create_tween()
+	t.tween_property(node, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _slide_up(node: Control):
+	node.show()
+	node.modulate.a = 0.0
+	node.position.y += 50
+	var t = create_tween().set_parallel(true)
+	t.tween_property(node, "modulate:a", 1.0, 0.4)
+	t.tween_property(node, "position:y", node.position.y - 50, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+func _shake_screen():
+	var start_pos = position
+	var t = create_tween()
+	for i in range(6):
+		t.tween_property(self, "position", start_pos + Vector2(randf_range(-15, 15), randf_range(-15, 15)), 0.05)
+	t.tween_property(self, "position", start_pos, 0.05)
