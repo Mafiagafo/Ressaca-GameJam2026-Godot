@@ -5,6 +5,7 @@ var ui_manager: UIManager
 var action_manager: ActionManager
 
 func _ready() -> void:
+	GameState.reset_metrics()
 	action_manager = ActionManager.new()
 	ui_manager = UIManager.new(
 		self,
@@ -42,6 +43,12 @@ func change_phase(new_phase: RoundContext.Phase) -> void:
 
 func execute_phase_round_start():
 	round_context.round_number += 1
+	
+	if GameState.is_victory(round_context.round_number):
+		change_phase(RoundContext.Phase.RESULTS)
+		ui_manager.show_victory_screen()
+		return
+		
 	GameState.is_foggy = false
 	GameState.is_radio_silent = false
 	GameState.has_instrument_failure = false
@@ -56,15 +63,20 @@ func execute_phase_round_start():
 	change_phase(RoundContext.Phase.BRIEFING)
 
 func execute_phase_briefing():
-	var msg = "Round %d Briefing\n\n" % round_context.round_number
+	var msg = "Last Round Briefing!\n\n" if round_context.round_number == 6 else "Round %d Briefing\n\n" % round_context.round_number
+	
+	var is_nominal = true
 	if GameState.fuel_level <= 3.0:
 		msg += "WARNING: Critical Fuel Levels!\n"
+		is_nominal = false
 	if GameState.correct_altitude <= 3.0:
 		msg += "WARNING: Low Altitude!\n"
+		is_nominal = false
 	if GameState.structural_hp <= 3.0:
 		msg += "WARNING: Structural Integrity Failing!\n"
+		is_nominal = false
 	
-	if msg == "Round %d Briefing\n\n" % round_context.round_number:
+	if is_nominal:
 		msg += "All systems nominal. Maintain current heading."
 		
 	ui_manager.show_briefing(round_context.round_number, msg)
@@ -135,7 +147,7 @@ func _on_next_pressed():
 	elif round_context.current_phase == RoundContext.Phase.CHAOS:
 		change_phase(RoundContext.Phase.SHUFFLE)
 	elif round_context.current_phase == RoundContext.Phase.RESULTS:
-		if GameState.is_game_over():
+		if GameState.is_game_over() or GameState.is_victory(round_context.round_number):
 			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 		else:
 			change_phase(RoundContext.Phase.START)

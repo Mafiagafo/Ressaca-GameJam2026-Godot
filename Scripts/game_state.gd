@@ -54,10 +54,9 @@ func reset_metrics() -> void:
 	has_panic = false
 
 func is_game_over() -> bool:
-	# Game over if any critical metric hits 0
-	return correct_altitude <= 0 or fuel_level <= 0 or structural_hp <= 0 or company_trust <= 0
+	# Game over if any metric hits 0
+	return correct_altitude <= 0 or fuel_level <= 0 or structural_hp <= 0 or \
+		   company_trust <= 0 or punctual_arrival <= 0 or passenger_comfort <= 0
 
-func is_victory() -> bool:
-	# Victory connection logic will be handled by the GameLoop script based on progression
-	# For now, we return false as placeholder or check if survival criteria met
-	return false
+func is_victory(current_round: int) -> bool:
+	return current_round > 6

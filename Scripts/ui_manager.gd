@@ -137,6 +137,19 @@ func update_meters_ui() -> void:
 	t.tween_property(hp_bar, "value", f_hp, 0.5)
 	t.tween_property(comfort_bar, "value", f_comf, 0.5)
 	t.tween_property(trust_bar, "value", f_trust, 0.5)
+	
+	_recolor_bar(alt_bar, f_alt)
+	_recolor_bar(fuel_bar, f_fuel)
+	_recolor_bar(time_bar, f_time)
+	_recolor_bar(hp_bar, f_hp)
+	_recolor_bar(comfort_bar, f_comf)
+	_recolor_bar(trust_bar, f_trust)
+
+func _recolor_bar(bar: ProgressBar, value: float):
+	if value >= 5.0:
+		bar.modulate = Color.GREEN
+	else:
+		bar.modulate = Color.RED
 
 func hide_all_panels():
 	actions_panel.hide()
@@ -254,6 +267,42 @@ func slide_up(node: Control):
 	var t = root.create_tween().set_parallel(true)
 	t.tween_property(node, "modulate:a", 1.0, 0.4)
 	t.tween_property(node, "position:y", node.position.y - 50, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+func show_victory_screen():
+	actions_panel.hide()
+	preview_label.hide()
+	hide_all_arrows()
+	pop_in(center_msg_box)
+	
+	var successful_metrics = []
+	if GameState.correct_altitude >= 5.0: successful_metrics.append("Altitude")
+	if GameState.fuel_level >= 5.0: successful_metrics.append("Fuel")
+	if GameState.punctual_arrival >= 5.0: successful_metrics.append("Punctuality")
+	if GameState.structural_hp >= 5.0: successful_metrics.append("Structural HP")
+	if GameState.passenger_comfort >= 5.0: successful_metrics.append("Comfort")
+	if GameState.company_trust >= 5.0: successful_metrics.append("Company Trust")
+	
+	var is_perfect = successful_metrics.size() == 6
+	var outcome_title = "Satisfactory Travel" if is_perfect else "Awful Travel"
+	
+	var msg = "FLIGHT COMPLETE: %s\n\n" % outcome_title
+	msg += "You survived 6 rounds.\n\n"
+	
+	if is_perfect:
+		msg += "All metrics remained above 50%!\nFantastic piloting.\n"
+	else:
+		msg += "Some metrics dropped to critical levels (1%% - 49%%).\nYour passengers won't forget this.\n\n"
+		msg += "Satisfactory Metrics:\n"
+		if successful_metrics.is_empty():
+			msg += "None! It was a terrifying flight."
+		else:
+			for sm in successful_metrics:
+				msg += "- " + sm + " [OK]\n"
+			
+	msg += "\nTotal Successes: %d / 6" % successful_metrics.size()
+	
+	msg_label.text = msg
+	next_btn.text = "Return to Menu"
 
 func shake_screen():
 	var start_pos = root.position
