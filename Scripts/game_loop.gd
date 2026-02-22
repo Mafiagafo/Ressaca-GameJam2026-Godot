@@ -63,22 +63,21 @@ func execute_phase_round_start():
 	change_phase(RoundContext.Phase.BRIEFING)
 
 func execute_phase_briefing():
-	var msg = "Last Round Briefing!\n\n" if round_context.round_number == 6 else "Round %d Briefing\n\n" % round_context.round_number
-	
 	var is_nominal = true
+	var msg = ""
 	if GameState.fuel_level <= 3.0:
-		msg += "WARNING: Critical Fuel Levels!\n"
+		msg += "⚠ Critical Fuel Levels!\n"
 		is_nominal = false
 	if GameState.correct_altitude <= 3.0:
-		msg += "WARNING: Low Altitude!\n"
+		msg += "⚠ Low Altitude!\n"
 		is_nominal = false
 	if GameState.structural_hp <= 3.0:
-		msg += "WARNING: Structural Integrity Failing!\n"
+		msg += "⚠ Structural Integrity Failing!\n"
 		is_nominal = false
-	
+
 	if is_nominal:
-		msg += "All systems nominal. Maintain current heading."
-		
+		msg = "All systems nominal.\nMaintain current heading."
+
 	ui_manager.show_briefing(round_context.round_number, msg)
 
 func execute_phase_chaos():

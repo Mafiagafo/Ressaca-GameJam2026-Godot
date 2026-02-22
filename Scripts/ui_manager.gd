@@ -10,7 +10,7 @@ var comfort_bar: ProgressBar
 var trust_bar: ProgressBar
 var actions_panel: PanelContainer
 
-var center_msg_box: VBoxContainer
+var center_msg_box: Control
 var msg_label: Label
 var next_btn: Button
 var preview_label: Label
@@ -101,69 +101,96 @@ func _style_progress_bars():
 		bar.add_theme_stylebox_override("background", bg_style)
 
 func _setup_dynamic_ui(on_next_pressed: Callable):
-	# -- Results box header (Action Applied banner)
 	var action_applied_tex: Texture2D = load("res://Assets/UI/HUD/Acction Applied.png")
-
-	# Build the center panel
-	center_msg_box = VBoxContainer.new()
-	center_msg_box.add_theme_constant_override("separation", 0)
-	root.add_child(center_msg_box)
-	center_msg_box.set_anchors_preset(Control.PRESET_CENTER)
-	center_msg_box.custom_minimum_size = Vector2(520, 0)
-
-	# Header bar with texture
-	var header_rect = TextureRect.new()
-	header_rect.custom_minimum_size = Vector2(520, 58)
-	if action_applied_tex:
-		header_rect.texture = action_applied_tex
-		header_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-		header_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	else:
-		header_rect.modulate = Color(0, 0, 0, 1)
-	center_msg_box.add_child(header_rect)
-
-	# "Action Applied: X" label overlaid on header
-	msg_label = Label.new()
-	msg_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	msg_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	msg_label.add_theme_font_size_override("font_size", 16)
-	# Place overlaid on header using a MarginContainer trick
-	var overlay = MarginContainer.new()
-	overlay.add_theme_constant_override("margin_top", -58)
-	overlay.add_theme_constant_override("margin_left", 0)
-	overlay.custom_minimum_size = Vector2(520, 58)
-	overlay.add_child(msg_label)
-	center_msg_box.add_child(overlay)
-
-	# Gray body panel
-	var body_panel = PanelContainer.new()
-	var body_style = StyleBoxFlat.new()
-	body_style.bg_color = Color(0.62, 0.62, 0.62, 1)
-	body_panel.add_theme_stylebox_override("panel", body_style)
-	center_msg_box.add_child(body_panel)
-
-	var body_vbox = VBoxContainer.new()
-	body_vbox.add_theme_constant_override("separation", 12)
-	body_panel.add_child(body_vbox)
-	body_vbox.custom_minimum_size = Vector2(520, 80)
-
-	# Next button
 	var next_btn_tex: Texture2D = load("res://Assets/UI/HUD/button nextround.png")
+
+	# --- One unified panel: floats at top-center, grows to fit content ---
+	center_msg_box = PanelContainer.new()
+	center_msg_box.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	root.add_child(center_msg_box)
+
+	# Anchor to top-center with margin
+	center_msg_box.anchor_left = 0.5
+	center_msg_box.anchor_right = 0.5
+	center_msg_box.anchor_top = 0.0
+	center_msg_box.anchor_bottom = 0.0
+	center_msg_box.offset_left = -270.0
+	center_msg_box.offset_right = 270.0
+	center_msg_box.offset_top = 20.0
+	center_msg_box.offset_bottom = 20.0 # set to top so the panel grows downward freely
+
+	# Apply Action Applied texture as background (9-patch so it stretches vertically)
+	if action_applied_tex:
+		var panel_style = StyleBoxTexture.new()
+		panel_style.texture = action_applied_tex
+		panel_style.texture_margin_left = 16
+		panel_style.texture_margin_right = 16
+		panel_style.texture_margin_top = 12
+		panel_style.texture_margin_bottom = 12
+		panel_style.content_margin_left = 24
+		panel_style.content_margin_right = 24
+		panel_style.content_margin_top = 18
+		panel_style.content_margin_bottom = 18
+		center_msg_box.add_theme_stylebox_override("panel", panel_style)
+	else:
+		var fallback = StyleBoxFlat.new()
+		fallback.bg_color = Color(0, 0, 0, 0.85)
+		fallback.content_margin_left = 24
+		fallback.content_margin_right = 24
+		fallback.content_margin_top = 18
+		fallback.content_margin_bottom = 18
+		center_msg_box.add_theme_stylebox_override("panel", fallback)
+
+	# --- Inner VBox: stacks title, separator, body, button ---
+	var inner_vbox = VBoxContainer.new()
+	inner_vbox.add_theme_constant_override("separation", 10)
+	inner_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center_msg_box.add_child(inner_vbox)
+
+	# Title label (white, bold) — updated each phase via msg_label
+	msg_label = Label.new()
+	msg_label.text = "Action Applied"
+	msg_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	msg_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	msg_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	msg_label.add_theme_font_size_override("font_size", 17)
+	inner_vbox.add_child(msg_label)
+
+	# Thin horizontal separator
+	var sep = HSeparator.new()
+	sep.add_theme_color_override("color", Color(1, 1, 1, 0.4))
+	sep.add_theme_constant_override("separation", 2)
+	inner_vbox.add_child(sep)
+
+	# Body label (white) — updated each phase via BodyLabel
+	var body_label = Label.new()
+	body_label.name = "BodyLabel"
+	body_label.text = ""
+	body_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	body_label.add_theme_font_size_override("font_size", 14)
+	inner_vbox.add_child(body_label)
+
+	# --- Next button ---
 	next_btn = Button.new()
 	next_btn.text = "Continue"
-	next_btn.flat = true
-	next_btn.custom_minimum_size = Vector2(200, 44)
+	next_btn.custom_minimum_size = Vector2(220, 46)
 	next_btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	next_btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	next_btn.add_theme_font_size_override("font_size", 14)
 	if next_btn_tex:
-		var btn_style = StyleBoxTexture.new()
-		btn_style.texture = next_btn_tex
-		next_btn.add_theme_stylebox_override("normal", btn_style)
-		next_btn.add_theme_stylebox_override("hover", btn_style)
-		next_btn.add_theme_stylebox_override("pressed", btn_style)
-		next_btn.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-		next_btn.add_theme_font_size_override("font_size", 14)
+		var normal_style = StyleBoxTexture.new()
+		normal_style.texture = next_btn_tex
+		var hover_style = StyleBoxTexture.new()
+		hover_style.texture = next_btn_tex
+		hover_style.modulate_color = Color(0.85, 0.85, 0.85, 1.0)
+		next_btn.add_theme_stylebox_override("normal", normal_style)
+		next_btn.add_theme_stylebox_override("hover", hover_style)
+		next_btn.add_theme_stylebox_override("pressed", normal_style)
+		next_btn.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 	next_btn.pressed.connect(on_next_pressed)
-	body_vbox.add_child(next_btn)
+	inner_vbox.add_child(next_btn)
 
 	# Preview label below the actions panel
 	preview_label = Label.new()
@@ -257,6 +284,7 @@ func _connect_action_buttons(all_actions: Array[ActionButton], on_action_pressed
 				center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 				var icon_rect = TextureRect.new()
 				icon_rect.texture = icon_tex
+				icon_rect.modulate = Color.BLACK
 				icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 				icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 				icon_rect.custom_minimum_size = Vector2(BTN_SIZE * 0.65, BTN_SIZE * 0.65)
@@ -340,12 +368,17 @@ func hide_all_panels():
 
 func show_briefing(round_number: int, content: String):
 	pop_in(center_msg_box)
-	msg_label.text = content
+	msg_label.text = "Round %d Briefing" % round_number if round_number < 6 else "Last Round Briefing!"
+	_get_body_label().text = content
 	next_btn.text = "Continue"
+
+func _get_body_label() -> Label:
+	return center_msg_box.find_child("BodyLabel", true, false) as Label
 
 func show_chaos(content: String, should_shake: bool):
 	pop_in(center_msg_box)
-	msg_label.text = content
+	msg_label.text = "Chaos Event!"
+	_get_body_label().text = content
 	next_btn.text = "Continue"
 	if should_shake:
 		shake_screen()
@@ -355,6 +388,7 @@ func show_action_selection(available_actions: Array[ActionButton]):
 	# Hide everything first and reset disabled state
 	for node in grid.get_children():
 		node.hide()
+		node.modulate = Color.WHITE
 		if node is TextureButton:
 			node.disabled = false
 		elif node is VBoxContainer:
@@ -374,6 +408,12 @@ func show_action_selection(available_actions: Array[ActionButton]):
 		if btn:
 			if GameState.is_radio_silent and (action.id == "keep_schedule" or action.id == "report_delay"):
 				btn.disabled = true
+				# Gray out the parent container
+				var parent = btn.get_parent()
+				if parent:
+					parent.modulate = Color(0.5, 0.5, 0.5, 1.0)
+				else:
+					btn.modulate = Color(0.5, 0.5, 0.5, 1.0)
 			shown_btns.append(btn)
 
 	if GameState.has_locked_controls:
@@ -381,6 +421,12 @@ func show_action_selection(available_actions: Array[ActionButton]):
 		active_btns.shuffle()
 		for i in range(min(2, active_btns.size() - 1)):
 			active_btns[i].disabled = true
+			# Gray out the parent container
+			var parent = active_btns[i].get_parent()
+			if parent:
+				parent.modulate = Color(0.5, 0.5, 0.5, 1.0)
+			else:
+				active_btns[i].modulate = Color(0.5, 0.5, 0.5, 1.0)
 
 	slide_up(actions_panel)
 	preview_label.show()
@@ -423,15 +469,14 @@ func show_results(action: ActionButton, is_game_over: bool):
 	hide_all_arrows()
 	pop_in(center_msg_box)
 
-	var msg = "Action applied: " + action.display_name + "\n\n"
 	if is_game_over:
-		msg += "GAME OVER. Critical Failure."
+		msg_label.text = "Game Over!"
+		_get_body_label().text = "CRITICAL FAILURE.\nThe plane never made it."
 		next_btn.text = "Return to Menu"
 	else:
-		msg += "You survived this round."
+		msg_label.text = "Action Applied: " + action.display_name
+		_get_body_label().text = "You survived this round."
 		next_btn.text = "Next Round"
-
-	msg_label.text = msg
 
 func show_victory_screen():
 	actions_panel.hide()
@@ -448,24 +493,21 @@ func show_victory_screen():
 	if GameState.company_trust >= 5.0: successful_metrics.append("Company Trust")
 
 	var is_perfect = successful_metrics.size() == 6
-	var outcome_title = "Satisfactory Travel" if is_perfect else "Awful Travel"
+	msg_label.text = "Flight Complete: " + ("Satisfactory Travel" if is_perfect else "Awful Travel")
 
-	var msg = "FLIGHT COMPLETE: %s\n\n" % outcome_title
-	msg += "You survived 6 rounds.\n\n"
-
+	var body = "You survived 6 rounds!\n\n"
 	if is_perfect:
-		msg += "All metrics remained above 50%!\nFantastic piloting.\n"
+		body += "All metrics stayed above 50%.\nFantastic piloting!"
 	else:
-		msg += "Some metrics fell below 50%%.\nYour passengers won't forget this.\n\n"
-		msg += "Satisfactory Metrics:\n"
+		body += "Some metrics fell below 50%.\nYour passengers won't forget this.\n\n"
+		body += "Satisfactory Metrics:\n"
 		if successful_metrics.is_empty():
-			msg += "None! It was a terrifying flight."
+			body += "None! It was a terrifying flight."
 		else:
 			for sm in successful_metrics:
-				msg += "- " + sm + " [OK]\n"
-
-	msg += "\nTotal Successes: %d / 6" % successful_metrics.size()
-	msg_label.text = msg
+				body += "- " + sm + " [OK]\n"
+	body += "\nTotal Successes: %d / 6" % successful_metrics.size()
+	_get_body_label().text = body
 	next_btn.text = "Return to Menu"
 
 func hide_all_arrows():
