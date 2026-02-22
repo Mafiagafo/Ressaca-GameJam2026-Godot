@@ -4,10 +4,8 @@
 [ext_resource type="Script" uid="uid://chmxnq0lvd1c6" path="res://Scenes/feedbacks.gd" id="2_eloub"]
 [ext_resource type="Shader" uid="uid://0ogme5hywtxw" path="res://Shaders/sky.gdshader" id="2_ugm1p"]
 [ext_resource type="PackedScene" uid="uid://dsxhfqu6wk13a" path="res://Assets/Models/tecoteco.glb" id="3_7u7q5"]
-[ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="4_7u7q5"]
-[ext_resource type="Script" path="res://Scripts/tecoteco.gd" id="4_v31dl"]
-[ext_resource type="Texture2D" uid="uid://by2jd1lcko8tj" path="res://Assets/UI/HUD/bg status.png" id="5_bgstat"]
-[ext_resource type="Texture2D" uid="uid://csnvwkuvjn6q" path="res://Assets/UI/HUD/plane panel.png" id="6_planep"]
+[ext_resource type="Script" uid="uid://b8lvm45dcqllj" path="res://Scripts/game_state_manager.gd" id="4_7u7q5"]
+[ext_resource type="Script" uid="uid://c4r7rg0pr1wif" path="res://Scripts/tecoteco.gd" id="4_v31dl"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v31dl"]
 shader = ExtResource("2_ugm1p")
@@ -63,120 +61,88 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_loop")
 
-[node name="PlanePanelBG" type="TextureRect" parent="." unique_id=1302865525]
+[node name="MetersContainer" type="GridContainer" parent="." unique_id=213909840]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -112.0
-offset_top = -224.0
-offset_right = 112.0
-offset_bottom = 152.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 50.0
+offset_right = 300.0
+offset_bottom = 200.0
 grow_horizontal = 2
-grow_vertical = 0
-texture = ExtResource("6_planep")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="StatusPanelBG" type="TextureRect" parent="." unique_id=277020238]
-layout_mode = 1
-offset_top = 136.0
-offset_right = 240.0
-offset_bottom = 720.0
-texture = ExtResource("5_bgstat")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="MetersContainer" type="VBoxContainer" parent="." unique_id=1221599214]
-layout_mode = 1
-offset_left = 16.0
-offset_top = 280.0
-offset_right = 206.0
-offset_bottom = 600.0
-theme_override_constants/separation = 6
-
-[node name="FuelLabel" type="Label" parent="MetersContainer" unique_id=773897663]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Fuel Level"
-
-[node name="FuelBar" type="ProgressBar" parent="MetersContainer" unique_id=344151580]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
-layout_mode = 2
-max_value = 10.0
-step = 0.1
-value = 10.0
-show_percentage = false
-
-[node name="PunctualLabel" type="Label" parent="MetersContainer" unique_id=1167890467]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Punctually"
-
-[node name="TimeBar" type="ProgressBar" parent="MetersContainer" unique_id=401595545]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
-layout_mode = 2
-max_value = 10.0
-value = 10.0
-show_percentage = false
-
-[node name="ComfLabel" type="Label" parent="MetersContainer" unique_id=279086898]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Passenger Comfort"
-
-[node name="ComfortBar" type="ProgressBar" parent="MetersContainer" unique_id=1374773763]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
-layout_mode = 2
-max_value = 10.0
-value = 10.0
-show_percentage = false
-
-[node name="TrustLabel" type="Label" parent="MetersContainer" unique_id=1388332785]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Company Trust"
-
-[node name="TrustBar" type="ProgressBar" parent="MetersContainer" unique_id=752640299]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
-layout_mode = 2
-max_value = 10.0
-value = 10.0
-show_percentage = false
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 2
 
 [node name="AltLabel" type="Label" parent="MetersContainer" unique_id=317157147]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Altitude (Correct)"
 
 [node name="AltitudeBar" type="ProgressBar" parent="MetersContainer" unique_id=1236750528]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="FuelLabel" type="Label" parent="MetersContainer" unique_id=773897663]
+layout_mode = 2
+text = "Fuel Level"
+
+[node name="FuelBar" type="ProgressBar" parent="MetersContainer" unique_id=344151580]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+step = 0.1
+value = 10.0
+
+[node name="TimeLabel" type="Label" parent="MetersContainer" unique_id=1167890467]
+layout_mode = 2
+text = "Punctuality"
+
+[node name="TimeBar" type="ProgressBar" parent="MetersContainer" unique_id=401595545]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 10.0
-show_percentage = false
 
 [node name="HPLabel" type="Label" parent="MetersContainer" unique_id=871665789]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Structural HP"
 
 [node name="HPBar" type="ProgressBar" parent="MetersContainer" unique_id=566574909]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(190, 14)
+custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 10.0
-show_percentage = false
 
-[node name="ActionsPanel" type="PanelContainer" parent="." unique_id=1171522817]
-self_modulate = Color(0, 0, 0, 0)
+[node name="ComfLabel" type="Label" parent="MetersContainer" unique_id=279086898]
+layout_mode = 2
+text = "Passenger Comfort"
+
+[node name="ComfortBar" type="ProgressBar" parent="MetersContainer" unique_id=1374773763]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 10.0
+
+[node name="TrustLabel" type="Label" parent="MetersContainer" unique_id=1388332785]
+layout_mode = 2
+text = "Company Trust"
+
+[node name="TrustBar" type="ProgressBar" parent="MetersContainer" unique_id=752640299]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 20)
+layout_mode = 2
+max_value = 10.0
+value = 5.0
+
+[node name="ActionsPanel" type="PanelContainer" parent="." unique_id=1279226779]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -188,109 +154,84 @@ grow_vertical = 0
 
 [node name="GridContainer" type="GridContainer" parent="ActionsPanel" unique_id=1726944872]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/h_separation = 40
+theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
-columns = 3
+columns = 4
 
 [node name="ClimbHigh" type="Button" parent="ActionsPanel/GridContainer" unique_id=1613238509]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Climb High"
-flat = true
 
 [node name="SmoothAscent" type="Button" parent="ActionsPanel/GridContainer" unique_id=629345922]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Smooth Ascent"
-flat = true
 
 [node name="MaxEconomy" type="Button" parent="ActionsPanel/GridContainer" unique_id=1961304370]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Max Economy"
-flat = true
 
 [node name="PullPower" type="Button" parent="ActionsPanel/GridContainer" unique_id=1219120401]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Pull Power"
-flat = true
 
 [node name="Accelerate" type="Button" parent="ActionsPanel/GridContainer" unique_id=2139770648]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Accelerate"
-flat = true
 
 [node name="Reduce" type="Button" parent="ActionsPanel/GridContainer" unique_id=327261770]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Reduce Speed"
-flat = true
 
 [node name="Aggressive" type="Button" parent="ActionsPanel/GridContainer" unique_id=461649286]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Aggressive Manu."
-flat = true
 
 [node name="Stabilize" type="Button" parent="ActionsPanel/GridContainer" unique_id=849544197]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Stabilize Struct."
-flat = true
 
 [node name="SmoothFlight" type="Button" parent="ActionsPanel/GridContainer" unique_id=494451594]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Smooth Flight"
-flat = true
 
 [node name="CalmingAd" type="Button" parent="ActionsPanel/GridContainer" unique_id=1048250770]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Calming Ad"
-flat = true
 
 [node name="KeepSchedule" type="Button" parent="ActionsPanel/GridContainer" unique_id=734554793]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Keep Schedule"
-flat = true
 
 [node name="ReportDelay" type="Button" parent="ActionsPanel/GridContainer" unique_id=2078206096]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
 text = "Report Delay"
-flat = true
 
-[node name="sky" type="Node3D" parent="." unique_id=725128445]
+[node name="sky" type="Node3D" parent="." unique_id=876592591]
+script = ExtResource("2_eloub")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="sky" unique_id=1325353805]
 environment = SubResource("Environment_eloub")
@@ -303,7 +244,7 @@ shadow_opacity = 0.5
 shadow_blur = 5.0
 
 [node name="tecoteco" parent="sky" unique_id=1515688263 instance=ExtResource("3_7u7q5")]
-transform = Transform3D(-4.371139e-08, 0, -1.0000001, 0, 1.0000001, 0, 1, 0, -4.3711392e-08, 2, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, -1.0000001, 0, 1.0000001, 0, 1, 0, -4.3711392e-08, 0, 0, 0)
 script = ExtResource("4_v31dl")
 
 [node name="CameraRig" type="Node3D" parent="sky" unique_id=1250347680]
@@ -320,6 +261,3 @@ script = ExtResource("4_7u7q5")
 camera_rig = NodePath("../CameraRig")
 side_point = NodePath("../CameraPoints/SidePoint")
 airplane = NodePath("../tecoteco")
-intro_duration = 1.5
-orbit_distance = 8.0
-orbit_speed = 1.0
