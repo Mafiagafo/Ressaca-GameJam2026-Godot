@@ -15,7 +15,20 @@ func _ready() -> void:
 		_on_action_unhovered,
 		action_manager.get_all_actions()
 	)
-	
+
+	# --- Airplane motor ambience (loops for the entire game session) ---
+	var ambient = AudioStreamPlayer.new()
+	add_child(ambient)
+	var ambient_stream = load("res://Assets/Ambience/Airplane Motor Ambience.wav")
+	if ambient_stream == null:
+		push_error("GameLoop: failed to load ambience file!")
+	else:
+		ambient.stream = ambient_stream
+		ambient.volume_db = -10.0
+		ambient.bus = "Master"
+		ambient.finished.connect(func(): ambient.play())
+		ambient.play()
+
 	round_context = RoundContext.new()
 	ui_manager.update_meters_ui()
 	_process_phase()

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://qx2olxm5fk08"
+path="res://.godot/imported/Airplane Motor Ambience.wav-a4848ce48c7ac29beccc99fcf32a5f4d.sample"
+
+[deps]
+
+source_file="res://Assets/Ambience/Airplane Motor Ambience.wav"
+dest_files=["res://.godot/imported/Airplane Motor Ambience.wav-a4848ce48c7ac29beccc99fcf32a5f4d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

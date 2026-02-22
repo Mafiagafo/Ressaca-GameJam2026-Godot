@@ -19,6 +19,10 @@ var arrow_indicators: Dictionary = {}
 var tex_arrow_up: Texture2D
 var tex_arrow_down: Texture2D
 
+var sfx_hover: AudioStreamPlayer
+var sfx_confirm: AudioStreamPlayer
+var sfx_error: AudioStreamPlayer
+
 # -- Icon map: action id -> texture path
 const ACTION_ICONS: Dictionary = {
 	"climb_high": "res://Assets/UI/icons/Climb high.png",
@@ -65,6 +69,7 @@ func _init(p_root: Control, on_next_pressed: Callable, on_action_pressed: Callab
 	GameState.metrics_changed.connect(update_meters_ui)
 
 	_load_arrow_textures()
+	_setup_sounds()
 	_style_progress_bars()
 	_setup_dynamic_ui(on_next_pressed)
 	_setup_arrow_indicators()
@@ -82,6 +87,23 @@ func _load_arrow_textures():
 		var img = Image.create(16, 16, false, Image.FORMAT_RGBA8)
 		img.fill(Color.RED)
 		tex_arrow_down = ImageTexture.create_from_image(img)
+
+func _setup_sounds():
+	var _make = func(path: String) -> AudioStreamPlayer:
+		var player = AudioStreamPlayer.new()
+		var stream = load(path)
+		if stream:
+			player.stream = stream
+		player.bus = "Master"
+		root.add_child(player)
+		return player
+	sfx_hover = _make.call("res://Assets/Sound/Hover.wav")
+	sfx_confirm = _make.call("res://Assets/Sound/Switch.wav")
+	sfx_error = _make.call("res://Assets/Sound/Error.wav")
+
+func _play_hover(): if sfx_hover and sfx_hover.stream: sfx_hover.play()
+func _play_confirm(): if sfx_confirm and sfx_confirm.stream: sfx_confirm.play()
+func _play_error(): if sfx_error and sfx_error.stream: sfx_error.play()
 
 func _style_progress_bars():
 	var status_bar_tex: Texture2D = load("res://Assets/UI/HUD/status bar.png")
@@ -189,7 +211,8 @@ func _setup_dynamic_ui(on_next_pressed: Callable):
 		next_btn.add_theme_stylebox_override("hover", hover_style)
 		next_btn.add_theme_stylebox_override("pressed", normal_style)
 		next_btn.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
-	next_btn.pressed.connect(on_next_pressed)
+	next_btn.pressed.connect(func(): _play_confirm(); on_next_pressed.call())
+	next_btn.mouse_entered.connect(_play_hover)
 	inner_vbox.add_child(next_btn)
 
 	# Preview label below the actions panel
@@ -308,9 +331,16 @@ func _connect_action_buttons(all_actions: Array[ActionButton], on_action_pressed
 		grid.add_child(vbox)
 		grid.move_child(vbox, btn_index)
 
-		tbtn.pressed.connect(func(): on_action_pressed.call(action))
-		tbtn.mouse_entered.connect(func(): on_action_hovered.call(action))
+		tbtn.pressed.connect(func(): _play_confirm(); on_action_pressed.call(action))
+		tbtn.mouse_entered.connect(func():
+			_play_hover()
+			on_action_hovered.call(action))
 		tbtn.mouse_exited.connect(func(): on_action_unhovered.call())
+		# Error sound when clicking a disabled button
+		tbtn.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				if tbtn.disabled:
+					_play_error())
 
 func _find_btn_for_action(action_id: String) -> TextureButton:
 	var grid = actions_panel.get_node("GridContainer")
