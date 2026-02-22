@@ -42,6 +42,11 @@ func change_phase(new_phase: RoundContext.Phase) -> void:
 
 func execute_phase_round_start():
 	round_context.round_number += 1
+	GameState.is_foggy = false
+	GameState.is_radio_silent = false
+	GameState.has_instrument_failure = false
+	GameState.has_locked_controls = false
+	GameState.has_panic = false
 	var kept_debuffs: Array[Debuff] = []
 	for d in round_context.active_debuffs:
 		d.duration -= 1
@@ -65,7 +70,7 @@ func execute_phase_briefing():
 	ui_manager.show_briefing(round_context.round_number, msg)
 
 func execute_phase_chaos():
-	var chaos_roll = randi() % 4
+	var chaos_roll = randi() % 9
 	var msg = "Chaos Event:\n\n"
 	if chaos_roll == 0:
 		msg += "Turbulence! Altitude -3."
@@ -76,10 +81,26 @@ func execute_phase_chaos():
 	elif chaos_roll == 2:
 		msg += "Angry Passengers! Comfort -3."
 		GameState.passenger_comfort -= 3.0
+	elif chaos_roll == 3:
+		msg += "Foggy Skies! Action previews hidden."
+		GameState.is_foggy = true
+	elif chaos_roll == 4:
+		msg += "Radio Silence! Communication actions disabled."
+		GameState.is_radio_silent = true
+	elif chaos_roll == 5:
+		msg += "Instrument Failure! Meters show false data."
+		GameState.has_instrument_failure = true
+	elif chaos_roll == 6:
+		msg += "Locked Controls! Need to force a decision."
+		GameState.has_locked_controls = true
+	elif chaos_roll == 7:
+		msg += "Panic in the Cabin! Comfort and Trust penalties doubled."
+		GameState.has_panic = true
 	else:
 		msg += "Clear Skies. No negative effects."
 	
-	ui_manager.show_chaos(msg, chaos_roll != 3)
+	ui_manager.update_meters_ui()
+	ui_manager.show_chaos(msg, chaos_roll != 8)
 
 func execute_phase_shuffle():
 	round_context.available_actions = action_manager.get_shuffled_actions(round_context.past_choices, 3)
@@ -89,12 +110,16 @@ func execute_phase_preview():
 	ui_manager.show_action_selection(round_context.available_actions)
 
 func execute_phase_results(action: ActionButton):
-	if action.effects.has("correct_altitude"): GameState.correct_altitude += action.effects["correct_altitude"]
-	if action.effects.has("fuel_level"): GameState.fuel_level += action.effects["fuel_level"]
-	if action.effects.has("punctual_arrival"): GameState.punctual_arrival += action.effects["punctual_arrival"]
-	if action.effects.has("structural_hp"): GameState.structural_hp += action.effects["structural_hp"]
-	if action.effects.has("passenger_comfort"): GameState.passenger_comfort += action.effects["passenger_comfort"]
-	if action.effects.has("company_trust"): GameState.company_trust += action.effects["company_trust"]
+	for key in action.effects:
+		var val = action.effects[key]
+		if GameState.has_panic and (key == "passenger_comfort" or key == "company_trust") and val < 0:
+			val *= 2.0
+		if key == "correct_altitude": GameState.correct_altitude += val
+		elif key == "fuel_level": GameState.fuel_level += val
+		elif key == "punctual_arrival": GameState.punctual_arrival += val
+		elif key == "structural_hp": GameState.structural_hp += val
+		elif key == "passenger_comfort": GameState.passenger_comfort += val
+		elif key == "company_trust": GameState.company_trust += val
 	
 	round_context.past_choices.push_front(action.id)
 	if round_context.past_choices.size() > 3:

@@ -123,12 +123,20 @@ func _connect_action_buttons(all_actions: Array[ActionButton], on_action_pressed
 func update_meters_ui() -> void:
 	if not root.is_inside_tree(): return
 	var t = root.create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	t.tween_property(alt_bar, "value", GameState.correct_altitude, 0.5)
-	t.tween_property(fuel_bar, "value", GameState.fuel_level, 0.5)
-	t.tween_property(time_bar, "value", GameState.punctual_arrival, 0.5)
-	t.tween_property(hp_bar, "value", GameState.structural_hp, 0.5)
-	t.tween_property(comfort_bar, "value", GameState.passenger_comfort, 0.5)
-	t.tween_property(trust_bar, "value", GameState.company_trust, 0.5)
+	
+	var f_alt = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.correct_altitude
+	var f_fuel = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.fuel_level
+	var f_time = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.punctual_arrival
+	var f_hp = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.structural_hp
+	var f_comf = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.passenger_comfort
+	var f_trust = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.company_trust
+	
+	t.tween_property(alt_bar, "value", f_alt, 0.5)
+	t.tween_property(fuel_bar, "value", f_fuel, 0.5)
+	t.tween_property(time_bar, "value", f_time, 0.5)
+	t.tween_property(hp_bar, "value", f_hp, 0.5)
+	t.tween_property(comfort_bar, "value", f_comf, 0.5)
+	t.tween_property(trust_bar, "value", f_trust, 0.5)
 
 func hide_all_panels():
 	actions_panel.hide()
@@ -151,12 +159,25 @@ func show_action_selection(available_actions: Array[ActionButton]):
 	var grid = actions_panel.get_node("GridContainer")
 	for node in grid.get_children():
 		node.hide()
+		if node is Button:
+			node.disabled = false
+			
+	var shown_buttons: Array[Button] = []
 		
 	for action in available_actions:
 		for node in grid.get_children():
 			if node is Button and node.text == action.display_name:
 				node.show()
+				if GameState.is_radio_silent and (action.id == "keep_schedule" or action.id == "report_delay"):
+					node.disabled = true
+				shown_buttons.append(node)
 				break
+				
+	if GameState.has_locked_controls:
+		var active_btns = shown_buttons.filter(func(b): return not b.disabled)
+		active_btns.shuffle()
+		for i in range(min(2, active_btns.size() - 1)):
+			active_btns[i].disabled = true
 				
 	slide_up(actions_panel)
 	preview_label.show()
@@ -171,8 +192,13 @@ func update_preview_label(action: ActionButton):
 		hide_all_arrows()
 		return
 		
-	var p_text = "Preview [%s]: " % action.display_name
 	hide_all_arrows()
+	
+	if GameState.is_foggy:
+		preview_label.text = "Preview [%s]: ??? (Instruments Failing)" % action.display_name
+		return
+		
+	var p_text = "Preview [%s]: " % action.display_name
 	
 	for key in action.effects:
 		var val = action.effects[key]
