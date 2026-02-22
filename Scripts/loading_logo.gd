@@ -5,6 +5,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	BGMManager.play_menu_music()
 	animation_player.play("Fade")
 	animation_player.animation_finished.connect(_on_animation_finished)
 
