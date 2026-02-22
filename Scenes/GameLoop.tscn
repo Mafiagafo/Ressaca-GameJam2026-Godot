@@ -1,8 +1,57 @@
-[gd_scene load_steps=2 format=3 uid="uid://cx4j1lq5k8v"]
+[gd_scene format=3 uid="uid://cx4j1lq5k8v"]
 
-[ext_resource type="Script" uid="uid://c5q3y1n3k2x" path="res://Scripts/game_loop.gd" id="1_loop"]
+[ext_resource type="Script" uid="uid://dhn4t68tbyxg1" path="res://Scripts/game_loop.gd" id="1_loop"]
+[ext_resource type="Shader" uid="uid://0ogme5hywtxw" path="res://Shaders/sky.gdshader" id="2_ugm1p"]
+[ext_resource type="PackedScene" uid="uid://dsxhfqu6wk13a" path="res://Assets/Models/tecoteco.glb" id="3_7u7q5"]
+[ext_resource type="Script" uid="uid://b8lvm45dcqllj" path="res://Scripts/game_state_manager.gd" id="4_7u7q5"]
+[ext_resource type="Script" uid="uid://c4r7rg0pr1wif" path="res://Scripts/tecoteco.gd" id="4_v31dl"]
 
-[node name="GameLoop" type="Control"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v31dl"]
+shader = ExtResource("2_ugm1p")
+shader_parameter/day_top_color = Color(0, 0.5441085, 0.9276911, 1)
+shader_parameter/day_bottom_color = Color(0.9408824, 0.9235227, 0.8230062, 1)
+shader_parameter/sunset_top_color = Color(0.57936704, 0.7719525, 0.9678518, 1)
+shader_parameter/sunset_bottom_color = Color(0, 0.621074, 0.97477454, 1)
+shader_parameter/night_top_color = Color(0.02, 0, 0.04, 1)
+shader_parameter/night_bottom_color = Color(0.1, 0, 0.2, 1)
+shader_parameter/horizon_color = Color(0.96884495, 0.98341376, 0.9736287, 1)
+shader_parameter/horizon_blur = 0.1999999955296
+shader_parameter/sun_color = Color(10, 8, 1, 1)
+shader_parameter/sun_sunset_color = Color(10, 0, 0, 1)
+shader_parameter/sun_size = 0.2
+shader_parameter/sun_blur = 10.0
+shader_parameter/moon_color = Color(1, 0.95, 0.7, 1)
+shader_parameter/moon_size = 0.06
+shader_parameter/moon_blur = 0.1
+shader_parameter/clouds_edge_color = Color(0.8, 0.8, 0.98, 1)
+shader_parameter/clouds_top_color = Color(1, 1, 1, 1)
+shader_parameter/clouds_middle_color = Color(0.92, 0.92, 0.98, 1)
+shader_parameter/clouds_bottom_color = Color(0.83, 0.83, 0.94, 1)
+shader_parameter/clouds_speed = 9.99999977648
+shader_parameter/clouds_direction = -0.2
+shader_parameter/clouds_scale = 1.999999955296
+shader_parameter/clouds_cutoff = 0.3
+shader_parameter/clouds_fuzziness = 0.5
+shader_parameter/clouds_weight = 0.0
+shader_parameter/clouds_blur = 0.25
+shader_parameter/stars_speed = 1.0
+shader_parameter/overwritten_time = 0.0
+
+[sub_resource type="Sky" id="Sky_lsyyi"]
+sky_material = SubResource("ShaderMaterial_v31dl")
+
+[sub_resource type="Environment" id="Environment_eloub"]
+background_mode = 2
+sky = SubResource("Sky_lsyyi")
+fog_mode = 1
+fog_light_color = Color(0.59327483, 0.7349024, 0.85008657, 1)
+fog_light_energy = 0.87
+fog_density = 1.0
+fog_sky_affect = 0.343
+fog_height_density = 0.02
+volumetric_fog_albedo = Color(0.30323696, 0.51096123, 0.6490855, 1)
+
+[node name="GameLoop" type="Control" unique_id=1640434693]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,16 +60,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_loop")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1098225073]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.156863, 0.156863, 0.156863, 1)
+color = Color(0.26, 0.26, 0.26, 0.07450981)
 
-[node name="MetersContainer" type="GridContainer" parent="."]
+[node name="MetersContainer" type="GridContainer" parent="." unique_id=213909840]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -30,26 +79,26 @@ offset_top = 50.0
 offset_right = 300.0
 offset_bottom = 200.0
 grow_horizontal = 2
-columns = 2
 theme_override_constants/h_separation = 20
 theme_override_constants/v_separation = 20
+columns = 2
 
-[node name="AltLabel" type="Label" parent="MetersContainer"]
+[node name="AltLabel" type="Label" parent="MetersContainer" unique_id=317157147]
 layout_mode = 2
 text = "Altitude (Correct)"
 
-[node name="AltitudeBar" type="ProgressBar" parent="MetersContainer"]
+[node name="AltitudeBar" type="ProgressBar" parent="MetersContainer" unique_id=1236750528]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 5.0
 
-[node name="FuelLabel" type="Label" parent="MetersContainer"]
+[node name="FuelLabel" type="Label" parent="MetersContainer" unique_id=773897663]
 layout_mode = 2
 text = "Fuel Level"
 
-[node name="FuelBar" type="ProgressBar" parent="MetersContainer"]
+[node name="FuelBar" type="ProgressBar" parent="MetersContainer" unique_id=344151580]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
@@ -57,51 +106,51 @@ max_value = 10.0
 step = 0.1
 value = 10.0
 
-[node name="TimeLabel" type="Label" parent="MetersContainer"]
+[node name="TimeLabel" type="Label" parent="MetersContainer" unique_id=1167890467]
 layout_mode = 2
 text = "Punctuality"
 
-[node name="TimeBar" type="ProgressBar" parent="MetersContainer"]
+[node name="TimeBar" type="ProgressBar" parent="MetersContainer" unique_id=401595545]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 10.0
 
-[node name="HPLabel" type="Label" parent="MetersContainer"]
+[node name="HPLabel" type="Label" parent="MetersContainer" unique_id=871665789]
 layout_mode = 2
 text = "Structural HP"
 
-[node name="HPBar" type="ProgressBar" parent="MetersContainer"]
+[node name="HPBar" type="ProgressBar" parent="MetersContainer" unique_id=566574909]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 10.0
 
-[node name="ComfLabel" type="Label" parent="MetersContainer"]
+[node name="ComfLabel" type="Label" parent="MetersContainer" unique_id=279086898]
 layout_mode = 2
 text = "Passenger Comfort"
 
-[node name="ComfortBar" type="ProgressBar" parent="MetersContainer"]
+[node name="ComfortBar" type="ProgressBar" parent="MetersContainer" unique_id=1374773763]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 10.0
 
-[node name="TrustLabel" type="Label" parent="MetersContainer"]
+[node name="TrustLabel" type="Label" parent="MetersContainer" unique_id=1388332785]
 layout_mode = 2
 text = "Company Trust"
 
-[node name="TrustBar" type="ProgressBar" parent="MetersContainer"]
+[node name="TrustBar" type="ProgressBar" parent="MetersContainer" unique_id=752640299]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 20)
 layout_mode = 2
 max_value = 10.0
 value = 5.0
 
-[node name="ActionsPanel" type="PanelContainer" parent="."]
+[node name="ActionsPanel" type="PanelContainer" parent="." unique_id=1279226779]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -111,80 +160,111 @@ offset_top = -200.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="GridContainer" type="GridContainer" parent="ActionsPanel"]
+[node name="GridContainer" type="GridContainer" parent="ActionsPanel" unique_id=1726944872]
 layout_mode = 2
-columns = 4
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
+columns = 4
 
-[node name="ClimbHigh" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="ClimbHigh" type="Button" parent="ActionsPanel/GridContainer" unique_id=1613238509]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Climb High"
 
-[node name="SmoothAscent" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="SmoothAscent" type="Button" parent="ActionsPanel/GridContainer" unique_id=629345922]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Smooth Ascent"
 
-[node name="MaxEconomy" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="MaxEconomy" type="Button" parent="ActionsPanel/GridContainer" unique_id=1961304370]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Max Economy"
 
-[node name="PullPower" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="PullPower" type="Button" parent="ActionsPanel/GridContainer" unique_id=1219120401]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Pull Power"
 
-[node name="Accelerate" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="Accelerate" type="Button" parent="ActionsPanel/GridContainer" unique_id=2139770648]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Accelerate"
 
-[node name="Reduce" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="Reduce" type="Button" parent="ActionsPanel/GridContainer" unique_id=327261770]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Reduce Speed"
 
-[node name="Aggressive" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="Aggressive" type="Button" parent="ActionsPanel/GridContainer" unique_id=461649286]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Aggressive Manu."
 
-[node name="Stabilize" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="Stabilize" type="Button" parent="ActionsPanel/GridContainer" unique_id=849544197]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Stabilize Struct."
 
-[node name="SmoothFlight" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="SmoothFlight" type="Button" parent="ActionsPanel/GridContainer" unique_id=494451594]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Smooth Flight"
 
-[node name="CalmingAd" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="CalmingAd" type="Button" parent="ActionsPanel/GridContainer" unique_id=1048250770]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Calming Ad"
 
-[node name="KeepSchedule" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="KeepSchedule" type="Button" parent="ActionsPanel/GridContainer" unique_id=734554793]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Keep Schedule"
 
-[node name="ReportDelay" type="Button" parent="ActionsPanel/GridContainer"]
+[node name="ReportDelay" type="Button" parent="ActionsPanel/GridContainer" unique_id=2078206096]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Report Delay"
+
+[node name="sky" type="Node3D" parent="." unique_id=876592591]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="sky" unique_id=1325353805]
+environment = SubResource("Environment_eloub")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="sky" unique_id=253367197]
+transform = Transform3D(1, 0, 0, 0, -0.9296929, 0.36833563, 0, -0.36833563, -0.9296929, -5.190819, 6.2637267, 2.690103)
+light_specular = 0.0
+shadow_enabled = true
+shadow_opacity = 0.5
+shadow_blur = 5.0
+
+[node name="tecoteco" parent="sky" unique_id=1515688263 instance=ExtResource("3_7u7q5")]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
+script = ExtResource("4_v31dl")
+
+[node name="CameraRig" type="Node3D" parent="sky" unique_id=1250347680]
+
+[node name="Camera" type="Camera3D" parent="sky/CameraRig" unique_id=416444141]
+
+[node name="CameraPoints" type="Node3D" parent="sky" unique_id=1394016987]
+
+[node name="SidePoint" type="Node3D" parent="sky/CameraPoints" unique_id=1659285052]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 5)
+
+[node name="GameStateManager" type="Node" parent="sky" unique_id=704605458 node_paths=PackedStringArray("camera_rig", "side_point", "airplane")]
+script = ExtResource("4_7u7q5")
+camera_rig = NodePath("../CameraRig")
+side_point = NodePath("../CameraPoints/SidePoint")
+airplane = NodePath("../tecoteco")
