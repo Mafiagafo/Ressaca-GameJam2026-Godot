@@ -244,7 +244,7 @@ shadow_opacity = 0.5
 shadow_blur = 5.0
 
 [node name="tecoteco" parent="sky" unique_id=1515688263 instance=ExtResource("3_7u7q5")]
-transform = Transform3D(-4.371139e-08, 0, -1.0000001, 0, 1.0000001, 0, 1, 0, -4.3711392e-08, 2, 0, 0)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
 script = ExtResource("4_v31dl")
 
 [node name="CameraRig" type="Node3D" parent="sky" unique_id=1250347680]
@@ -261,6 +261,3 @@ script = ExtResource("4_7u7q5")
 camera_rig = NodePath("../CameraRig")
 side_point = NodePath("../CameraPoints/SidePoint")
 airplane = NodePath("../tecoteco")
-intro_duration = 1.5
-orbit_distance = 8.0
-orbit_speed = 1.0
