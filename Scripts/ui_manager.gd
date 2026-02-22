@@ -123,12 +123,33 @@ func _connect_action_buttons(all_actions: Array[ActionButton], on_action_pressed
 func update_meters_ui() -> void:
 	if not root.is_inside_tree(): return
 	var t = root.create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	t.tween_property(alt_bar, "value", GameState.correct_altitude, 0.5)
-	t.tween_property(fuel_bar, "value", GameState.fuel_level, 0.5)
-	t.tween_property(time_bar, "value", GameState.punctual_arrival, 0.5)
-	t.tween_property(hp_bar, "value", GameState.structural_hp, 0.5)
-	t.tween_property(comfort_bar, "value", GameState.passenger_comfort, 0.5)
-	t.tween_property(trust_bar, "value", GameState.company_trust, 0.5)
+	
+	var f_alt = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.correct_altitude
+	var f_fuel = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.fuel_level
+	var f_time = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.punctual_arrival
+	var f_hp = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.structural_hp
+	var f_comf = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.passenger_comfort
+	var f_trust = randf_range(0.0, 10.0) if GameState.has_instrument_failure else GameState.company_trust
+	
+	t.tween_property(alt_bar, "value", f_alt, 0.5)
+	t.tween_property(fuel_bar, "value", f_fuel, 0.5)
+	t.tween_property(time_bar, "value", f_time, 0.5)
+	t.tween_property(hp_bar, "value", f_hp, 0.5)
+	t.tween_property(comfort_bar, "value", f_comf, 0.5)
+	t.tween_property(trust_bar, "value", f_trust, 0.5)
+	
+	_recolor_bar(alt_bar, f_alt)
+	_recolor_bar(fuel_bar, f_fuel)
+	_recolor_bar(time_bar, f_time)
+	_recolor_bar(hp_bar, f_hp)
+	_recolor_bar(comfort_bar, f_comf)
+	_recolor_bar(trust_bar, f_trust)
+
+func _recolor_bar(bar: ProgressBar, value: float):
+	if value >= 5.0:
+		bar.modulate = Color.GREEN
+	else:
+		bar.modulate = Color.RED
 
 func hide_all_panels():
 	actions_panel.hide()
@@ -151,12 +172,25 @@ func show_action_selection(available_actions: Array[ActionButton]):
 	var grid = actions_panel.get_node("GridContainer")
 	for node in grid.get_children():
 		node.hide()
+		if node is Button:
+			node.disabled = false
+			
+	var shown_buttons: Array[Button] = []
 		
 	for action in available_actions:
 		for node in grid.get_children():
 			if node is Button and node.text == action.display_name:
 				node.show()
+				if GameState.is_radio_silent and (action.id == "keep_schedule" or action.id == "report_delay"):
+					node.disabled = true
+				shown_buttons.append(node)
 				break
+				
+	if GameState.has_locked_controls:
+		var active_btns = shown_buttons.filter(func(b): return not b.disabled)
+		active_btns.shuffle()
+		for i in range(min(2, active_btns.size() - 1)):
+			active_btns[i].disabled = true
 				
 	slide_up(actions_panel)
 	preview_label.show()
@@ -171,8 +205,13 @@ func update_preview_label(action: ActionButton):
 		hide_all_arrows()
 		return
 		
-	var p_text = "Preview [%s]: " % action.display_name
 	hide_all_arrows()
+	
+	if GameState.is_foggy:
+		preview_label.text = "Preview [%s]: ??? (Instruments Failing)" % action.display_name
+		return
+		
+	var p_text = "Preview [%s]: " % action.display_name
 	
 	for key in action.effects:
 		var val = action.effects[key]
@@ -228,6 +267,42 @@ func slide_up(node: Control):
 	var t = root.create_tween().set_parallel(true)
 	t.tween_property(node, "modulate:a", 1.0, 0.4)
 	t.tween_property(node, "position:y", node.position.y - 50, 0.4).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+
+func show_victory_screen():
+	actions_panel.hide()
+	preview_label.hide()
+	hide_all_arrows()
+	pop_in(center_msg_box)
+	
+	var successful_metrics = []
+	if GameState.correct_altitude >= 5.0: successful_metrics.append("Altitude")
+	if GameState.fuel_level >= 5.0: successful_metrics.append("Fuel")
+	if GameState.punctual_arrival >= 5.0: successful_metrics.append("Punctuality")
+	if GameState.structural_hp >= 5.0: successful_metrics.append("Structural HP")
+	if GameState.passenger_comfort >= 5.0: successful_metrics.append("Comfort")
+	if GameState.company_trust >= 5.0: successful_metrics.append("Company Trust")
+	
+	var is_perfect = successful_metrics.size() == 6
+	var outcome_title = "Satisfactory Travel" if is_perfect else "Awful Travel"
+	
+	var msg = "FLIGHT COMPLETE: %s\n\n" % outcome_title
+	msg += "You survived 6 rounds.\n\n"
+	
+	if is_perfect:
+		msg += "All metrics remained above 50%!\nFantastic piloting.\n"
+	else:
+		msg += "Some metrics dropped to critical levels (1%% - 49%%).\nYour passengers won't forget this.\n\n"
+		msg += "Satisfactory Metrics:\n"
+		if successful_metrics.is_empty():
+			msg += "None! It was a terrifying flight."
+		else:
+			for sm in successful_metrics:
+				msg += "- " + sm + " [OK]\n"
+			
+	msg += "\nTotal Successes: %d / 6" % successful_metrics.size()
+	
+	msg_label.text = msg
+	next_btn.text = "Return to Menu"
 
 func shake_screen():
 	var start_pos = root.position
