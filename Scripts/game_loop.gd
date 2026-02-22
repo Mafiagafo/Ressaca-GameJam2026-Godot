@@ -68,14 +68,14 @@ func execute_phase_chaos():
 	var chaos_roll = randi() % 4
 	var msg = "Chaos Event:\n\n"
 	if chaos_roll == 0:
-		msg += "Turbulence! Altitude -1."
-		GameState.correct_altitude -= 1.0
+		msg += "Turbulence! Altitude -3."
+		GameState.correct_altitude -= 3.0
 	elif chaos_roll == 1:
-		msg += "Headwind! Fuel -1."
-		GameState.fuel_level -= 1.0
+		msg += "Headwind! Fuel -3."
+		GameState.fuel_level -= 3.0
 	elif chaos_roll == 2:
-		msg += "Angry Passengers! Comfort -1."
-		GameState.passenger_comfort -= 1.0
+		msg += "Angry Passengers! Comfort -3."
+		GameState.passenger_comfort -= 3.0
 	else:
 		msg += "Clear Skies. No negative effects."
 	
