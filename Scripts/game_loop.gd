@@ -82,7 +82,22 @@ func execute_phase_briefing():
 	ui_manager.show_briefing(round_context.round_number, msg)
 
 func execute_phase_chaos():
-	var chaos_roll = randi() % 9
+	# Build a pool of all event IDs (0-8), shuffle, pick first not previously used
+	var all_events: Array[int] = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+	var pool: Array[int] = []
+	for e in all_events:
+		if not round_context.past_chaos_events.has(e):
+			pool.append(e)
+	
+	# If all events used (more rounds than events), reset pool
+	if pool.is_empty():
+		pool = all_events.duplicate()
+		round_context.past_chaos_events.clear()
+	
+	pool.shuffle()
+	var chaos_roll = pool[0]
+	round_context.past_chaos_events.append(chaos_roll)
+	
 	var msg = "Chaos Event:\n\n"
 	if chaos_roll == 0:
 		msg += "Turbulence! Altitude -3."

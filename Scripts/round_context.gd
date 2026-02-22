@@ -8,6 +8,7 @@ var current_phase: Phase = Phase.START
 var active_debuffs: Array[Debuff] = []
 var available_actions: Array[ActionButton] = []
 var past_choices: Array[String] = []
+var past_chaos_events: Array[int] = []
 
 func _init() -> void:
 	pass
