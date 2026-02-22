@@ -29,6 +29,8 @@ func _ready() -> void:
 		ambient.finished.connect(func(): ambient.play())
 		ambient.play()
 
+	BGMManager.play_game_music()
+
 	round_context = RoundContext.new()
 	ui_manager.update_meters_ui()
 	_process_phase()

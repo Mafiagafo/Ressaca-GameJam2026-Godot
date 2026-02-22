@@ -13,6 +13,12 @@ func _ready() -> void:
 
 func play_menu_music() -> void:
 	if stream and not playing:
+		volume_db = 0.0
+		play()
+
+func play_game_music() -> void:
+	if stream and not playing:
+		volume_db = -5.0
 		play()
 
 func stop_music() -> void:
