@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://cx4j1lq5k8v"]
 
 [ext_resource type="Script" uid="uid://dhn4t68tbyxg1" path="res://Scripts/game_loop.gd" id="1_loop"]
-[ext_resource type="Script" uid="uid://chmxnq0lvd1c6" path="res://Scenes/feedbacks.gd" id="2_eloub"]
 [ext_resource type="Shader" uid="uid://0ogme5hywtxw" path="res://Shaders/sky.gdshader" id="2_ugm1p"]
 [ext_resource type="PackedScene" uid="uid://dsxhfqu6wk13a" path="res://Assets/Models/tecoteco.glb" id="3_7u7q5"]
 [ext_resource type="Script" path="res://Scripts/game_state_manager.gd" id="4_7u7q5"]

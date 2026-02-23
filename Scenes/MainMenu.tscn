@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://csva81slspcty"]
 
 [ext_resource type="Script" uid="uid://b7fh613oit87x" path="res://Scripts/main_menu.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cyu48yo63ffd7" path="res://Assets/Logo/logo 1920x1080.png" id="2_logo"]
+[ext_resource type="Texture2D" uid="uid://b7xx3au76mgux" path="res://Assets/Logo/Cover.jpg" id="2_853f1"]
 
 [node name="MainMenu" type="Control" unique_id=29529027]
 layout_mode = 3
@@ -40,7 +40,7 @@ alignment = 1
 [node name="LogoPlaceholder" type="TextureRect" parent="VBoxContainer" unique_id=1787513168]
 custom_minimum_size = Vector2(500, 200)
 layout_mode = 2
-texture = ExtResource("2_logo")
+texture = ExtResource("2_853f1")
 expand_mode = 1
 stretch_mode = 5
 

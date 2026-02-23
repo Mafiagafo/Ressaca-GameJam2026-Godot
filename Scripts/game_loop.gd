@@ -15,7 +15,22 @@ func _ready() -> void:
 		_on_action_unhovered,
 		action_manager.get_all_actions()
 	)
-	
+
+	# --- Airplane motor ambience (loops for the entire game session) ---
+	var ambient = AudioStreamPlayer.new()
+	add_child(ambient)
+	var ambient_stream = load("res://Assets/Ambience/Airplane Motor Ambience.wav")
+	if ambient_stream == null:
+		push_error("GameLoop: failed to load ambience file!")
+	else:
+		ambient.stream = ambient_stream
+		ambient.volume_db = -10.0
+		ambient.bus = "Master"
+		ambient.finished.connect(func(): ambient.play())
+		ambient.play()
+
+	BGMManager.play_game_music()
+
 	round_context = RoundContext.new()
 	ui_manager.update_meters_ui()
 	_process_phase()
@@ -63,22 +78,21 @@ func execute_phase_round_start():
 	change_phase(RoundContext.Phase.BRIEFING)
 
 func execute_phase_briefing():
-	var msg = "Last Round Briefing!\n\n" if round_context.round_number == 6 else "Round %d Briefing\n\n" % round_context.round_number
-	
 	var is_nominal = true
+	var msg = ""
 	if GameState.fuel_level <= 3.0:
-		msg += "WARNING: Critical Fuel Levels!\n"
+		msg += "⚠ Critical Fuel Levels!\n"
 		is_nominal = false
 	if GameState.correct_altitude <= 3.0:
-		msg += "WARNING: Low Altitude!\n"
+		msg += "⚠ Low Altitude!\n"
 		is_nominal = false
 	if GameState.structural_hp <= 3.0:
-		msg += "WARNING: Structural Integrity Failing!\n"
+		msg += "⚠ Structural Integrity Failing!\n"
 		is_nominal = false
-	
+
 	if is_nominal:
-		msg += "All systems nominal. Maintain current heading."
-		
+		msg = "All systems nominal.\nMaintain current heading."
+
 	ui_manager.show_briefing(round_context.round_number, msg)
 
 func execute_phase_chaos():
@@ -98,7 +112,7 @@ func execute_phase_chaos():
 	var chaos_roll = pool[0]
 	round_context.past_chaos_events.append(chaos_roll)
 	
-	var msg = "Chaos Event:\n\n"
+	var msg = ""
 	if chaos_roll == 0:
 		msg += "Turbulence! Altitude -3."
 		GameState.correct_altitude -= 3.0
