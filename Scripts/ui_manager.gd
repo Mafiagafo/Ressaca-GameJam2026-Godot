@@ -35,8 +35,8 @@ const ACTION_ICONS: Dictionary = {
 	"stabilize": "res://Assets/UI/icons/Stabilize struct.png",
 	"smooth_flight": "res://Assets/UI/icons/Smooth Flight.png",
 	"calming_ad": "res://Assets/UI/icons/Calming ad.png",
-	"keep_schedule": "res://Assets/UI/icons/Keep schedule.png",
-	"report_delay": "res://Assets/UI/icons/Report Delay.png",
+	"keep_schedule": "res://Assets/UI/icons/Keep schedule - Transparent.png",
+	"report_delay": "res://Assets/UI/icons/Report Delay - Transparent.png",
 }
 
 # Maps button node name -> action id (must align with scene button names)
@@ -178,19 +178,18 @@ func _setup_dynamic_ui(on_next_pressed: Callable):
 	msg_label.add_theme_font_size_override("font_size", 17)
 	inner_vbox.add_child(msg_label)
 
-	# Thin horizontal separator
-	var sep = HSeparator.new()
-	sep.add_theme_color_override("color", Color(1, 1, 1, 0.4))
-	sep.add_theme_constant_override("separation", 2)
-	inner_vbox.add_child(sep)
+	# Invisible spacer instead of separator line
+	var spacer = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 8)
+	inner_vbox.add_child(spacer)
 
-	# Body label (white) — updated each phase via BodyLabel
+	# Body label — BLACK text (readable on the gray lower section of the panel)
 	var body_label = Label.new()
 	body_label.name = "BodyLabel"
 	body_label.text = ""
 	body_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	body_label.add_theme_color_override("font_color", Color(0, 0, 0, 1))
 	body_label.add_theme_font_size_override("font_size", 14)
 	inner_vbox.add_child(body_label)
 

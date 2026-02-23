@@ -112,7 +112,7 @@ func execute_phase_chaos():
 	var chaos_roll = pool[0]
 	round_context.past_chaos_events.append(chaos_roll)
 	
-	var msg = "Chaos Event:\n\n"
+	var msg = ""
 	if chaos_roll == 0:
 		msg += "Turbulence! Altitude -3."
 		GameState.correct_altitude -= 3.0
